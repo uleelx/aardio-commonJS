@@ -7,11 +7,11 @@
     var require = web.script.commonJS();
 
     // 一句话引入JS模块
-	var zxcvbn = require("zxcvbn")
+    var zxcvbn = require("zxcvbn")
 
-	var password = "Kuda123!998&&^e"
-	var result = zxcvbn(password)
-	win.msgbox(password ++ " 的密码强度为 " ++ result.score);
+    var password = "Kuda123!998&&^e"
+    var result = zxcvbn(password)
+    win.msgbox(password ++ " 的密码强度为 " ++ result.score);
 ```
 
 # require的其他用法
