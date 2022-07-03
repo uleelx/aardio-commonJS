@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<project ver="10" name="require示例" libEmbed="true" icon="..." ui="win" output="require示例.exe" CompanyName="单位名称" FileDescription="require示例" LegalCopyright="Copyright (C) 作者 2022" ProductName="require示例" InternalName="require示例" FileVersion="0.0.0.1" ProductVersion="0.0.0.1" publishDir="/dist/" dstrip="false" local="false" ignored="false">
+	<file name="main.aardio" path="main.aardio" comment="main.aardio"/>
+	<folder name="资源文件" path="res" embed="true" local="false" ignored="false">
+		<folder name="js" path="res\js" comment="res\js">
+			<file name="BigInteger.min.js" path="res\js\BigInteger.min.js" comment="res\js\BigInteger.min.js"/>
+			<file name="js-yaml.js" path="res\js\js-yaml.js" comment="res\js\js-yaml.js"/>
+			<file name="zxcvbn.js" path="res\js\zxcvbn.js" comment="res\js\zxcvbn.js"/>
+		</folder>
+	</folder>
+	<folder name="窗体文件" path="dlg" comment="目录" embed="true" local="false" ignored="false"/>
+</project>

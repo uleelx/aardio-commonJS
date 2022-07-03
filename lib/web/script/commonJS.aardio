@@ -1,0 +1,85 @@
+﻿import web.script;
+import fsys.path;
+import crypt;
+
+namespace web.script;
+
+class commonJS{
+	ctor(baseUrl){
+		this.loaded_modules = {}; // 记录已加载的module，避免重复加载
+		this.module_vm = {}; // 每个module都创建VM，避免互相污染
+		this.baseUrl = ..fsys.path.addBackslash(baseUrl || "/res/js/");
+	};
+	loadModule = function(src){
+		var hashCode = "_"++..crypt.md5(src)
+		
+		// 已加载的module直接返回
+		if(this.loaded_modules[hashCode]!=null) {
+			return hashCode;
+		}
+		
+		// 初始化VM，模拟CommonJS模块系统
+		var _vm = ..web.script("ES6")
+		_vm.addCode("module={};module.exports={};exports=module.exports;")
+		
+		// 加载JS代码
+		if(..string.startWith(src, "http")){
+			// 网络文件
+			import inet.http;
+			var http = ..inet.http();
+			var data = http.get(src);
+			http.close();
+			if(!data) return;
+			_vm.addCode(data);
+		} elseif(..string.len(src) > 260){
+			// 内嵌字符
+			_vm.addCode(src);
+		} else {
+			// 本地文件
+			if(!..string.endWith(src,".js")){
+				src = src ++ ".js"
+			}
+			if(!..io.exist(src)){
+				src = this.baseUrl ++ src;
+			}
+			_vm.addCode(..string.load(src));
+		}
+		
+		// 获取要导出的函数或对象
+		_vm.addCode( hashCode ++ "= (typeof module.exports === 'function' || Object.keys(module.exports).length !== 0) ? module.exports : exports.default")
+		
+		// 缓存当前模块VM
+		this.module_vm[hashCode] = _vm;
+		
+		// 缓存模块
+		this.loaded_modules[hashCode] = true;
+		return hashCode;
+	}
+	
+	@{
+		// 处理require()，利用元表处理无限引用
+		_call = function(filename){
+			var hashCode = owner.loadModule(filename)
+			var _vm = owner.module_vm[hashCode];
+			
+			var _meta;
+			_meta = {
+				_call = function(...){
+					return _vm.json[owner._name](...); 
+				};
+				_get = function(k){ 
+					return {_name = owner._name++"."++k; @_meta}
+				};
+			}
+			return {_name = hashCode; @_meta}
+		}
+	};
+}
+
+/**intellisense() 
+web.script.commonJS = 创建ES6虚拟机用于引入JavaScript脚本和模块
+web.script.commonJS(.(baseUrl) = 可选用 @baseUrl 指定搜索路径，默认为 /res/js/
+web.script.commonJS() = !require.
+!require(__/*JS文件路径*/) = 引入本地JS文件
+end intellisense**/
+

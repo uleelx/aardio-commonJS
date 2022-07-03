@@ -1,0 +1,63 @@
+import win.ui;
+/*DSG{{*/
+mainForm = win.form(text="require示例";right=501;bottom=233)
+mainForm.add(
+button={cls="button";text="  默认搜索目录，导出函数（zxcvbn密码强度检测）";left=100;top=21;right=422;bottom=57;align="left";z=1};
+button2={cls="button";text="  默认搜索目录，导出对象（YAML解析器）";left=100;top=67;right=422;bottom=103;align="left";z=2};
+button3={cls="button";text="  内嵌代码内容，导出对象（大数处理，产生随机数）";left=100;top=112;right=422;bottom=148;align="left";z=3};
+button4={cls="button";text="  引用网络路径，导出函数（国密SM3哈希函数）";left=100;top=157;right=422;bottom=193;align="left";z=4}
+)
+/*}}*/
+
+if(_ARGV.opt){
+	mainForm.edit.print(_ARGV.opt,_ARGV[#_ARGV]);
+}
+
+import web.script.commonJS;
+import web.json;
+
+var require = web.script.commonJS();
+
+mainForm.button.oncommand = function(id,event){
+	// 文件来自 https://github.com/dropbox/zxcvbn
+	var zxcvbn = require("zxcvbn")
+	
+	var password = "Kuda123!998&&^e"
+	var result = zxcvbn(password)
+	win.msgbox(password ++ " 的密码强度为 " ++ result.score);
+}
+
+mainForm.button2.oncommand = function(id,event){
+	// 文件来自 https://github.com/nodeca/js-yaml
+	var yaml = require("js-yaml")
+	
+	var yamlText = /*
+YAML: YAML Ain't Markup Language™
+
+What It Is:
+  YAML is a human-friendly data serialization language.
+
+*/
+
+	var object = yaml.loadAll(yamlText)
+	win.msgbox(web.json.stringify(object,true))
+}
+
+mainForm.button3.oncommand = function(id,event){
+	// 文件来自 https://github.com/peterolson/BigInteger.js
+	var bigInt = require($"/res/js/BigInteger.min.js")
+	
+	var n = bigInt.randBetween("2e255", "2e256");
+	win.msgbox("随机大数：" ++ n)
+}
+
+mainForm.button4.oncommand = function(id,event){
+	// 源库来自 https://github.com/jiaxingzheng/JavaScript-SM3
+	var sm3 = require("https://raw.fastgit.org/jiaxingzheng/JavaScript-SM3/master/sm3.js")
+	
+	var hashResult = sm3("这里是明文");
+	win.msgbox("国密SM3哈希值：" ++ hashResult)	
+}
+
+mainForm.show();
+return win.loopMessage();
